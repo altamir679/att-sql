@@ -1,0 +1,61 @@
+CREATE DATABASE sistema_eleitoral;
+USE sistema_eleitoral;
+
+CREATE TABLE LOCALIDADE (
+    id_localidade INT PRIMARY KEY,
+    nome_localidade VARCHAR(100),
+    estado VARCHAR(50)
+);
+
+CREATE TABLE ZONA_ELEITORAL (
+    id_zona INT PRIMARY KEY,
+    nome_zona VARCHAR(100),
+    FK_LOCALIDADE_id_localidade INT,
+    FOREIGN KEY (FK_LOCALIDADE_id_localidade) REFERENCES LOCALIDADE(id_localidade)
+);
+
+CREATE TABLE SECAO_ELEITORAL (
+    id_secao INT PRIMARY KEY,
+    nome_secao VARCHAR(100),
+    FK_ZONA_id_zona INT,
+    FOREIGN KEY (FK_ZONA_id_zona) REFERENCES ZONA_ELEITORAL(id_zona)
+);
+
+INSERT INTO LOCALIDADE VALUES (1, 'São Paulo', 'SP');
+INSERT INTO LOCALIDADE VALUES (2, 'Campinas', 'SP');
+INSERT INTO LOCALIDADE VALUES (3, 'Curitiba', 'PR');
+INSERT INTO LOCALIDADE VALUES (4, 'Florianópolis', 'SC');
+INSERT INTO LOCALIDADE VALUES (5, 'Porto Alegre', 'RS');
+
+INSERT INTO ZONA_ELEITORAL VALUES (1, 'Zona Norte', 1);
+INSERT INTO ZONA_ELEITORAL VALUES (2, 'Zona Sul', 1);
+INSERT INTO ZONA_ELEITORAL VALUES (3, 'Zona Leste', 2);
+INSERT INTO ZONA_ELEITORAL VALUES (4, 'Zona Oeste', 3);
+INSERT INTO ZONA_ELEITORAL VALUES (5, 'Zona Central', 4);
+
+INSERT INTO SECAO_ELEITORAL VALUES (1, 'Seção 101', 1);
+INSERT INTO SECAO_ELEITORAL VALUES (2, 'Seção 102', 1);
+INSERT INTO SECAO_ELEITORAL VALUES (3, 'Seção 201', 2);
+INSERT INTO SECAO_ELEITORAL VALUES (4, 'Seção 301', 3);
+INSERT INTO SECAO_ELEITORAL VALUES (5, 'Seção 401', 4);
+
+
+UPDATE LOCALIDADE SET nome_localidade = 'São Paulo - Centro' WHERE id_localidade = 1;
+UPDATE ZONA_ELEITORAL SET nome_zona = 'Zona Sul Ampliada' WHERE id_zona = 2;
+
+
+DELETE FROM SECAO_ELEITORAL WHERE id_secao = 5;
+DELETE FROM ZONA_ELEITORAL WHERE id_zona = 5;
+
+
+SELECT Z.id_zona, Z.nome_zona
+FROM ZONA_ELEITORAL Z
+JOIN LOCALIDADE L ON Z.FK_LOCALIDADE_id_localidade = L.id_localidade
+WHERE L.estado = 'SP'
+ORDER BY Z.nome_zona;
+
+SELECT S.id_secao, S.nome_secao
+FROM SECAO_ELEITORAL S
+JOIN ZONA_ELEITORAL Z ON S.FK_ZONA_id_zona = Z.id_zona
+WHERE Z.nome_zona = 'Zona Norte'
+ORDER BY S.nome_secao;

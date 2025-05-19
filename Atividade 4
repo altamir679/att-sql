@@ -1,0 +1,99 @@
+-- 1. Criação do banco de dados
+CREATE DATABASE SistemaVendas;
+USE SistemaVendas;
+
+-- 2. Criação das tabelas
+
+CREATE TABLE Clientes (
+    ClienteID INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(100),
+    Email VARCHAR(100),
+    Cidade VARCHAR(100)
+);
+
+CREATE TABLE Produtos (
+    ProdutoID INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(100),
+    Preco DECIMAL(10,2)
+);
+
+CREATE TABLE Pedidos (
+    PedidoID INT PRIMARY KEY AUTO_INCREMENT,
+    ClienteID INT,
+    DataPedido DATE,
+    FOREIGN KEY (ClienteID) REFERENCES Clientes(ClienteID)
+);
+
+CREATE TABLE ItensPedido (
+    ItemID INT PRIMARY KEY AUTO_INCREMENT,
+    PedidoID INT,
+    ProdutoID INT,
+    Quantidade INT,
+    FOREIGN KEY (PedidoID) REFERENCES Pedidos(PedidoID),
+    FOREIGN KEY (ProdutoID) REFERENCES Produtos(ProdutoID)
+);
+
+-- 3. Inserção de registros
+
+INSERT INTO Clientes (Nome, Email, Cidade) VALUES
+('Ana Silva', 'ana@email.com', 'São Paulo'),
+('Carlos Lima', 'carlos@email.com', 'Rio de Janeiro'),
+('Mariana Souza', 'mariana@email.com', 'Belo Horizonte'),
+('João Pedro', 'joao@email.com', 'Recife'),
+('Laura Costa', 'laura@email.com', 'Fortaleza'),
+('Rafael Torres', 'rafael@email.com', 'São Paulo'),
+('Fernanda Dias', 'fernanda@email.com', 'Curitiba'),
+('Bruno Rocha', 'bruno@email.com', 'Salvador'),
+('Juliana Martins', 'juliana@email.com', 'Manaus'),
+('Lucas Almeida', 'lucas@email.com', 'Brasília');
+
+INSERT INTO Produtos (Nome, Preco) VALUES
+('Notebook Dell', 4500.00),
+('Smartphone Samsung', 2200.00),
+('Mouse Logitech', 120.00),
+('Teclado Mecânico', 350.00),
+('Monitor LG 24"', 850.00),
+('HD Externo 1TB', 430.00),
+('Impressora HP', 780.00),
+('Cadeira Gamer', 1200.00),
+('Tablet Lenovo', 1800.00),
+('Webcam Full HD', 250.00);
+
+INSERT INTO Pedidos (ClienteID, DataPedido) VALUES
+(1, '2024-01-10'), (2, '2024-01-15'), (3, '2024-02-02'),
+(4, '2024-02-20'), (5, '2024-03-10'), (6, '2024-03-18'),
+(7, '2024-04-01'), (8, '2024-04-22'), (9, '2024-05-01'),
+(10, '2024-05-10');
+
+INSERT INTO ItensPedido (PedidoID, ProdutoID, Quantidade) VALUES
+(1, 1, 1), (2, 2, 1), (3, 3, 2),
+(4, 4, 1), (5, 5, 1), (6, 6, 1),
+(7, 7, 1), (8, 8, 1), (9, 9, 1),
+(10, 10, 2);
+
+-- 4. Consultas com INNER JOIN e LIKE
+
+-- Consulta 1: Pedidos com nome do cliente e data
+SELECT Pedidos.PedidoID, Clientes.Nome, Pedidos.DataPedido
+FROM Pedidos
+INNER JOIN Clientes ON Pedidos.ClienteID = Clientes.ClienteID;
+
+-- Consulta 2: Itens de pedido com nome do produto e quantidade
+SELECT ItensPedido.ItemID, Produtos.Nome, ItensPedido.Quantidade
+FROM ItensPedido
+INNER JOIN Produtos ON ItensPedido.ProdutoID = Produtos.ProdutoID;
+
+-- Consulta 3: Clientes que moram em cidades que começam com "S"
+SELECT * FROM Clientes
+WHERE Cidade LIKE 'S%';
+
+-- Consulta 4: Produtos com nome contendo “HD”
+SELECT * FROM Produtos
+WHERE Nome LIKE '%HD%';
+
+-- Consulta 5: Detalhar pedidos com cliente, produto e quantidade
+SELECT C.Nome AS Cliente, P.Nome AS Produto, I.Quantidade
+FROM ItensPedido I
+INNER JOIN Pedidos Pe ON I.PedidoID = Pe.PedidoID
+INNER JOIN Clientes C ON Pe.ClienteID = C.ClienteID
+INNER JOIN Produtos P ON I.ProdutoID = P.ProdutoID;
